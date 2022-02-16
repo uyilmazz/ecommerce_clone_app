@@ -35,13 +35,18 @@ class _ProductViewState extends State<ProductView> {
           'shoe_thumb_2',
           'shoe_thumb_3',
           'shoe_thumb_4',
-          'shoe_thumb_5'
-        ]),
+          'shoe_thumb_5',
+        ],
+        availableSize: ['US 6', 'US 7', 'US 8', 'US 9'],
+        description:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ',
+        rates: 2),
     Product(
         name: 'Nike Air Max 97',
         category: 'Trendin Now',
         price: 260.0,
-        imageUrl: 'product_shoe2'),
+        imageUrl: 'product_shoe2',
+        rates: 3.5),
     Product(
         name: 'Nike Air Max 92607',
         category: 'Trending Now',

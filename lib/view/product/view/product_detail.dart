@@ -1,3 +1,5 @@
+import 'package:ecommerce_clone_app/_product/widget/card/available_color_circle.dart';
+import 'package:ecommerce_clone_app/_product/widget/card/detail_size_cart.dart';
 import 'package:ecommerce_clone_app/_product/widget/card/product_detail_image_card.dart';
 import 'package:ecommerce_clone_app/_product/widget/custom_divider.dart';
 import 'package:ecommerce_clone_app/core/extension/context_extension.dart';
@@ -17,6 +19,18 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   int selectedItem = 0;
+  int availableSizeSelectedItem = 0;
+  int availableColorSeletecItem = 0;
+  String red2 = "red";
+  List<Color>? availableColor = [
+    Colors.red,
+    Colors.blue,
+    Colors.orange,
+    Colors.yellow,
+    Colors.green,
+    Colors.black,
+    Colors.purple
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -40,30 +54,137 @@ class _ProductDetailState extends State<ProductDetail> {
     );
   }
 
-  Container buildProductDetail(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: context.mediumValue),
-      padding: EdgeInsets.symmetric(
-          vertical: context.lowValue, horizontal: context.normalValue),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius:
-              BorderRadius.vertical(top: Radius.circular(context.mediumValue))),
-      child: Column(
-        children: [
-          const CustomDivider(indent: 0.40, endIndent: 0.40),
-          buildNameAndPrice(context),
-          buildRatingBar(context)
-        ],
+  Widget buildProductDetail(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        margin: EdgeInsets.only(top: context.mediumValue),
+        padding: EdgeInsets.symmetric(
+            vertical: context.lowValue, horizontal: context.normalValue),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+                top: Radius.circular(context.mediumValue * 1.5))),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            const CustomDivider(indent: 0.40, endIndent: 0.40),
+            buildNameAndPrice(context),
+            buildRatingBar(context),
+            Container(
+              height: context.height * 0.14,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text('Available Size',
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle1!
+                          .copyWith(fontWeight: FontWeight.w700)),
+                  buildAvailableSizeCart(context),
+                ],
+              ),
+            ),
+
+            Container(
+              height: context.height * 0.14,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text('Available Color',
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle1!
+                          .copyWith(fontWeight: FontWeight.w700)),
+                  buildAvailableColor(context),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Product Description',
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1!
+                        .copyWith(fontWeight: FontWeight.w700)),
+                SizedBox(
+                  height: context.normalValue,
+                ),
+                Text(
+                    widget.product.description != null
+                        ? widget.product.description.toString()
+                        : 'Product description is not found',
+                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                        fontWeight: FontWeight.w400, color: Colors.black54))
+              ],
+            )
+            // buildAvailableColor(context),
+          ],
+        ),
       ),
     );
+  }
+
+  Widget buildAvailableColor(BuildContext context) {
+    return availableColor != null
+        ? Container(
+            padding: EdgeInsets.only(left: context.lowValue),
+            height: context.height * 0.06,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: List.generate(
+                  availableColor!.length,
+                  (index) => GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            availableColorSeletecItem = index;
+                          });
+                        },
+                        child: AvailableColorCart(
+                            selected: availableColorSeletecItem == index
+                                ? true
+                                : false,
+                            color: availableColor![index]),
+                      )),
+            ),
+          )
+        : const Text('Not Available Color');
+  }
+
+  Widget buildAvailableSizeCart(BuildContext context) {
+    return widget.product.availableSize != null
+        ? Container(
+            padding: EdgeInsets.only(left: context.lowValue),
+            height: context.height * 0.06,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: List.generate(
+                  widget.product.availableSize!.length,
+                  (index) => GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            availableSizeSelectedItem = index;
+                          });
+                        },
+                        child: AvailableSizeCart(
+                            selected: availableSizeSelectedItem == index
+                                ? true
+                                : false,
+                            sizeString: widget.product.availableSize![index]),
+                      )),
+            ),
+          )
+        : const Text('Not Available Size');
   }
 
   Align buildRatingBar(BuildContext context) {
     return Align(
         alignment: Alignment.bottomRight,
         child: RatingBar.builder(
-          initialRating: 3,
+          initialRating: widget.product.rates!,
           itemSize: context.normalValue,
           minRating: 1,
           direction: Axis.horizontal,
@@ -79,33 +200,35 @@ class _ProductDetailState extends State<ProductDetail> {
         ));
   }
 
-  Row buildNameAndPrice(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          widget.product.name.toString().toUpperCase(),
-          style: Theme.of(context)
-              .textTheme
-              .headline5!
-              .copyWith(fontWeight: FontWeight.w800),
-        ),
-        RichText(
-          text: TextSpan(
-            text: '\$ ',
+  Widget buildNameAndPrice(BuildContext context) {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            widget.product.name.toString().toUpperCase(),
             style: Theme.of(context)
                 .textTheme
-                .headline6!
-                .copyWith(fontWeight: FontWeight.w800, color: Colors.red),
-            children: <TextSpan>[
-              TextSpan(
-                  text: widget.product.price.toString(),
-                  style: Theme.of(context).textTheme.headline5!.copyWith(
-                      fontWeight: FontWeight.w800, color: Colors.black)),
-            ],
+                .headline5!
+                .copyWith(fontWeight: FontWeight.w800),
           ),
-        ),
-      ],
+          RichText(
+            text: TextSpan(
+              text: '\$ ',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6!
+                  .copyWith(fontWeight: FontWeight.w800, color: Colors.red),
+              children: <TextSpan>[
+                TextSpan(
+                    text: widget.product.price.toString(),
+                    style: Theme.of(context).textTheme.headline5!.copyWith(
+                        fontWeight: FontWeight.w800, color: Colors.black)),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
