@@ -2,6 +2,7 @@ import 'package:ecommerce_clone_app/_product/widget/card/available_color_circle.
 import 'package:ecommerce_clone_app/_product/widget/card/detail_size_cart.dart';
 import 'package:ecommerce_clone_app/_product/widget/card/product_detail_image_card.dart';
 import 'package:ecommerce_clone_app/_product/widget/custom_divider.dart';
+import 'package:ecommerce_clone_app/_product/widget/text/custom_rich_text.dart';
 import 'package:ecommerce_clone_app/core/extension/context_extension.dart';
 import 'package:ecommerce_clone_app/core/extension/string_extension.dart';
 import 'package:ecommerce_clone_app/view/product/model/product.dart';
@@ -35,22 +36,103 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: buildFloatingActionButton(),
       body: SafeArea(
           child: Column(
         children: [
-          Expanded(
-            flex: 4,
-            child: Container(
-              padding: context.verticalAndHorizontalLowPadding,
-              child: Column(children: [
-                buildAppBar(context),
-                Expanded(flex: 3, child: buildProductImage(context)),
-              ]),
-            ),
-          ),
+          Expanded(flex: 4, child: buildAppBarAndImageCategory(context)),
           Expanded(flex: 6, child: buildProductDetail(context))
         ],
       )),
+    );
+  }
+
+  FloatingActionButton buildFloatingActionButton() {
+    return FloatingActionButton(
+        backgroundColor: const Color(0xFFE65829),
+        onPressed: () {},
+        child: const Icon(
+          Icons.shopping_basket,
+          color: Colors.white,
+        ));
+  }
+
+  Container buildAppBarAndImageCategory(BuildContext context) {
+    return Container(
+      padding: context.verticalAndHorizontalLowPadding,
+      child: Column(children: [
+        buildAppBar(context),
+        Expanded(flex: 3, child: buildProductImage(context)),
+      ]),
+    );
+  }
+
+  Row buildAppBar(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _appBarIcon(
+            Icons.arrow_back_ios_outlined, () => {Navigator.pop(context)},
+            isOutline: true, color: Colors.black54),
+        _appBarIcon(
+            widget.product.isFavorite! ? Icons.favorite : Icons.favorite_border,
+            () => {Navigator.pop(context)},
+            isOutline: false,
+            color: widget.product.isFavorite! ? Colors.red : Colors.grey),
+      ],
+    );
+  }
+
+  Widget _appBarIcon(IconData icon, Function() onPressed,
+      {Color color = Colors.grey, bool isOutline = false}) {
+    return InkWell(
+      child: Container(
+        padding: context.normalPadding * 0.7,
+        decoration: BoxDecoration(
+          border: Border.all(
+              style: isOutline ? BorderStyle.solid : BorderStyle.none,
+              width: 1.5,
+              color: !isOutline ? Colors.transparent : Colors.grey),
+          color: isOutline ? Colors.transparent : Colors.white,
+          borderRadius: BorderRadius.circular(context.lowValue * 1.5),
+        ),
+        child: Icon(icon, size: context.normalValue, color: color),
+      ),
+      onTap: onPressed,
+    );
+  }
+
+  Widget buildProductImage(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(bottom: context.lowValue),
+      child: Column(children: [
+        Expanded(
+          flex: 16,
+          child: buildStackProductImage(context),
+        ),
+        Expanded(
+          flex: 4,
+          child: widget.product.detailImages != null
+              ? buildImageDetailListView(context)
+              : const SizedBox(),
+        )
+      ]),
+    );
+  }
+
+  Stack buildStackProductImage(BuildContext context) {
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        Text('AIP',
+            style: TextStyle(
+                fontSize: context.highValue * 2,
+                color: Colors.grey.shade300,
+                fontWeight: FontWeight.bold)),
+        Image.asset(
+          'show_1'.toPng, // widget.product.detailImages![selectedItem].toPng
+        )
+      ],
     );
   }
 
@@ -68,7 +150,7 @@ class _ProductDetailState extends State<ProductDetail> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
-            const CustomDivider(indent: 0.40, endIndent: 0.40),
+            const Center(child: CustomDivider(indent: 0.40, endIndent: 0.40)),
             buildNameAndPrice(context),
             buildRatingBar(context),
             Container(
@@ -78,9 +160,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text('Available Size',
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1!
+                      style: context.textTheme.subtitle1!
                           .copyWith(fontWeight: FontWeight.w700)),
                   buildAvailableSizeCart(context),
                 ],
@@ -94,9 +174,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text('Available Color',
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1!
+                      style: context.textTheme.subtitle1!
                           .copyWith(fontWeight: FontWeight.w700)),
                   buildAvailableColor(context),
                 ],
@@ -106,9 +184,7 @@ class _ProductDetailState extends State<ProductDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Product Description',
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle1!
+                    style: context.textTheme.subtitle1!
                         .copyWith(fontWeight: FontWeight.w700)),
                 SizedBox(
                   height: context.normalValue,
@@ -117,7 +193,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     widget.product.description != null
                         ? widget.product.description.toString()
                         : 'Product description is not found',
-                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                    style: context.textTheme.subtitle1!.copyWith(
                         fontWeight: FontWeight.w400, color: Colors.black54))
               ],
             )
@@ -207,46 +283,12 @@ class _ProductDetailState extends State<ProductDetail> {
         children: [
           Text(
             widget.product.name.toString().toUpperCase(),
-            style: Theme.of(context)
-                .textTheme
-                .headline5!
+            style: context.textTheme.headline5!
                 .copyWith(fontWeight: FontWeight.w800),
           ),
-          RichText(
-            text: TextSpan(
-              text: '\$ ',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6!
-                  .copyWith(fontWeight: FontWeight.w800, color: Colors.red),
-              children: <TextSpan>[
-                TextSpan(
-                    text: widget.product.price.toString(),
-                    style: Theme.of(context).textTheme.headline5!.copyWith(
-                        fontWeight: FontWeight.w800, color: Colors.black)),
-              ],
-            ),
-          ),
+          CustomRichText(price: widget.product.price),
         ],
       ),
-    );
-  }
-
-  Widget buildProductImage(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(bottom: context.lowValue),
-      child: Column(children: [
-        Expanded(
-          flex: 15,
-          child: buildStackProductImage(context),
-        ),
-        Expanded(
-          flex: 4,
-          child: widget.product.detailImages != null
-              ? buildImageDetailListView(context)
-              : const SizedBox(),
-        )
-      ]),
     );
   }
 
@@ -265,71 +307,6 @@ class _ProductDetailState extends State<ProductDetail> {
                     imageName: widget.product.detailImages![index],
                     selected: index == selectedItem ? true : false),
               )),
-    );
-  }
-
-  Stack buildStackProductImage(BuildContext context) {
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        Text('AIP',
-            style: TextStyle(
-                fontSize: context.highValue * 2,
-                color: Colors.grey.shade300,
-                fontWeight: FontWeight.bold)),
-        Image.asset(
-          'show_1'.toPng, // widget.product.detailImages![selectedItem].toPng
-        )
-      ],
-    );
-  }
-
-  Row buildAppBar(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        InkWell(
-          child: Container(
-            padding: context.normalPadding * 0.6,
-            decoration: BoxDecoration(
-              border: Border.all(width: 1.5, color: Colors.grey),
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(context.lowValue * 1.5),
-            ),
-            child: Icon(Icons.arrow_back_ios_outlined,
-                size: context.normalValue, color: Colors.grey),
-          ),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        InkWell(
-          child: Container(
-            padding: context.normalPadding * 0.7,
-            decoration: BoxDecoration(
-                boxShadow: const <BoxShadow>[
-                  BoxShadow(
-                      color: Color(0xfff8f8f8),
-                      blurRadius: 5,
-                      spreadRadius: 10,
-                      offset: Offset(5, 5)),
-                ],
-                border: Border.all(
-                    style: BorderStyle.none, width: 1.5, color: Colors.grey),
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(context.lowValue)),
-            child: Icon(
-                widget.product.isFavorite!
-                    ? Icons.favorite
-                    : Icons.favorite_border,
-                size: context.normalValue,
-                color: widget.product.isFavorite! ? Colors.red : Colors.grey),
-          ),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 }

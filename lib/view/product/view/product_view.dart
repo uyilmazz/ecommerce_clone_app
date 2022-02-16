@@ -1,5 +1,6 @@
 import 'package:ecommerce_clone_app/core/extension/string_extension.dart';
 import 'package:ecommerce_clone_app/view/product/model/category.dart';
+import 'package:ecommerce_clone_app/view/shopping_cart/view/shopping_cart_view.dart';
 
 import '../../../_product/widget/card/product_cart.dart';
 import '../../../core/extension/context_extension.dart';
@@ -26,6 +27,7 @@ class _ProductViewState extends State<ProductView> {
 
   List<Product> products = [
     Product(
+        id: 1,
         name: 'Nike Air Max 200',
         category: 'Trending Now',
         price: 240.0,
@@ -42,44 +44,69 @@ class _ProductViewState extends State<ProductView> {
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ',
         rates: 2),
     Product(
+        id: 2,
         name: 'Nike Air Max 97',
         category: 'Trendin Now',
         price: 260.0,
         imageUrl: 'product_shoe2',
+        isFavorite: true,
         rates: 3.5),
     Product(
+        id: 3,
         name: 'Nike Air Max 92607',
         category: 'Trending Now',
         price: 280.5,
-        imageUrl: 'product_shoe')
+        imageUrl: 'product_shoe'),
+    Product(
+        id: 4,
+        name: 'Nike Air Max Test',
+        category: 'Popular',
+        price: 120,
+        imageUrl: 'product_shoe2'),
+    Product(
+        id: 5,
+        name: 'Nike Air Max 92607',
+        category: 'Trending Now',
+        price: 280.5,
+        imageUrl: 'product_shoe'),
   ];
+  int bottomNavigatorSelectedItem = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(),
-      bottomNavigationBar: buildBottomNavigatorBar(),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: context.dynamicWidth(0.05)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Our', style: TextStyle(fontSize: 25)),
-            const Text('Products',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-            const Spacer(),
-            Expanded(
-                flex: 2,
-                child: Row(children: [
-                  Expanded(child: buildSearchTextField()),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.menu))
-                ])),
-            const Spacer(flex: 2),
-            Expanded(flex: 2, child: buildTabMenu()),
-            Expanded(flex: 18, child: buildProductListView()),
-            const Spacer(flex: 3)
-          ],
-        ),
+        appBar: buildAppBar(),
+        bottomNavigationBar: buildBottomNavigatorBar(),
+        body: bottomNavigatorSelectedItem == 0
+            ? buildOurProductsPage(context)
+            : bottomNavigatorSelectedItem == 1
+                ? const SizedBox()
+                : bottomNavigatorSelectedItem == 2
+                    ? ShoppingCart(products: products)
+                    : const SizedBox());
+  }
+
+  Padding buildOurProductsPage(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.dynamicWidth(0.05)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Our', style: TextStyle(fontSize: 25)),
+          const Text('Products',
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+          const Spacer(),
+          Expanded(
+              flex: 2,
+              child: Row(children: [
+                Expanded(child: buildSearchTextField()),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.menu))
+              ])),
+          const Spacer(flex: 2),
+          Expanded(flex: 2, child: buildTabMenu()),
+          Expanded(flex: 18, child: buildProductListView()),
+          const Spacer(flex: 3)
+        ],
       ),
     );
   }
@@ -120,10 +147,14 @@ class _ProductViewState extends State<ProductView> {
           label: 's',
         ),
       ],
-      currentIndex: 1,
+      currentIndex: bottomNavigatorSelectedItem,
       selectedItemColor: Colors.amber[800],
       unselectedItemColor: Colors.grey,
-      onTap: (selected) {},
+      onTap: (selected) {
+        setState(() {
+          bottomNavigatorSelectedItem = selected;
+        });
+      },
     );
   }
 

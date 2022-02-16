@@ -10,12 +10,13 @@ class CustomDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Divider(
-      color: Colors.grey,
-      // height: 10,
-      indent: context.witdh * indent,
-      endIndent: context.witdh * endIndent,
-      thickness: 4,
+    return Container(
+      margin: context.verticalNormalPadding,
+      alignment: Alignment.centerRight,
+      decoration: BoxDecoration(
+          color: Colors.grey, borderRadius: BorderRadius.circular(10)),
+      height: 5,
+      width: 50,
     );
   }
 }
