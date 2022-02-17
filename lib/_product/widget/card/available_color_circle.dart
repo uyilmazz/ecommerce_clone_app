@@ -1,6 +1,6 @@
-import 'package:ecommerce_clone_app/core/extension/context_extension.dart';
-import 'package:ecommerce_clone_app/core/extension/string_extension.dart';
 import 'package:flutter/material.dart';
+
+import '../../../core/extension/context_extension.dart';
 
 class AvailableColorCart extends StatelessWidget {
   final bool selected;
@@ -16,12 +16,12 @@ class AvailableColorCart extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: context.dynamicWidth(0.035)),
       child: CircleAvatar(
         backgroundColor: color.withAlpha(100),
-        radius: context.normalValue,
+        radius: context.heightNormalValue,
         child: selected
             ? Icon(
                 Icons.check_circle,
                 color: color,
-                size: context.normalValue * 1.5,
+                size: context.heightNormalValue * 1.5,
               )
             : CircleAvatar(
                 radius: 10,

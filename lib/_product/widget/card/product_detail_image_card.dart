@@ -1,6 +1,7 @@
-import 'package:ecommerce_clone_app/core/extension/context_extension.dart';
-import 'package:ecommerce_clone_app/core/extension/string_extension.dart';
 import 'package:flutter/material.dart';
+
+import '../../../core/extension/context_extension.dart';
+import '../../../core/extension/string_extension.dart';
 
 class ImageCard extends StatelessWidget {
   final bool selected;

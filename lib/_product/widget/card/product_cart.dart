@@ -1,9 +1,9 @@
-import 'package:ecommerce_clone_app/view/product/view/product_detail.dart';
+import 'package:flutter/material.dart';
 
 import '../../../core/extension/context_extension.dart';
 import '../../../core/extension/string_extension.dart';
-import 'package:flutter/material.dart';
 import '../../../view/product/model/product.dart';
+import '../../../view/product/view/product_detail.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -17,13 +17,14 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-          horizontal: context.normalValue, vertical: context.normalValue),
-      margin: context.lowPadding,
+          horizontal: context.heightNormalValue,
+          vertical: context.heightNormalValue),
+      margin: context.heightLowPadding,
       width: context.dynamicWidth(0.5),
       height: context.dynamicHeight(0.32),
       decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(context.normalValue)),
+          borderRadius: BorderRadius.circular(context.heightNormalValue)),
       child: Stack(
         children: [buildFavoriteButton(), buildColumnBodyInfo(context)],
       ),

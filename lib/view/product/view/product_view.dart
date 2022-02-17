@@ -1,12 +1,14 @@
-import 'package:ecommerce_clone_app/core/extension/string_extension.dart';
-import 'package:ecommerce_clone_app/view/product/model/category.dart';
-import 'package:ecommerce_clone_app/view/shopping_cart/view/shopping_cart_view.dart';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import '../view_model/product_view_model.dart';
+import '../../shopping_cart/view_model/shopping_card_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../../_product/widget/card/product_cart.dart';
 import '../../../core/extension/context_extension.dart';
-import 'package:flutter/material.dart';
-
-import '../model/product.dart';
+import '../../../core/extension/string_extension.dart';
+import '../../shopping_cart/view/shopping_cart_view.dart';
+import '../model/category.dart';
 
 class ProductView extends StatefulWidget {
   const ProductView({Key? key}) : super(key: key);
@@ -16,6 +18,9 @@ class ProductView extends StatefulWidget {
 }
 
 class _ProductViewState extends State<ProductView> {
+  final ProductViewModel viewModel = ProductViewModel();
+  final ShoppingCardViewModel shoppingCardViewModel = ShoppingCardViewModel();
+
   List<String> tabs = ['Ayakkabı', 'Kazak', 'Çanta', 'Mont', 'Jacket', 'Watch'];
 
   List<Category> categories = [
@@ -25,65 +30,72 @@ class _ProductViewState extends State<ProductView> {
     Category(name: 'Bag', image: 'jacket'),
   ];
 
-  List<Product> products = [
-    Product(
-        id: 1,
-        name: 'Nike Air Max 200',
-        category: 'Trending Now',
-        price: 240.0,
-        imageUrl: 'product_shoe',
-        detailImages: [
-          'shoe_thumb_1',
-          'shoe_thumb_2',
-          'shoe_thumb_3',
-          'shoe_thumb_4',
-          'shoe_thumb_5',
-        ],
-        availableSize: ['US 6', 'US 7', 'US 8', 'US 9'],
-        description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ',
-        rates: 2),
-    Product(
-        id: 2,
-        name: 'Nike Air Max 97',
-        category: 'Trendin Now',
-        price: 260.0,
-        imageUrl: 'product_shoe2',
-        isFavorite: true,
-        rates: 3.5),
-    Product(
-        id: 3,
-        name: 'Nike Air Max 92607',
-        category: 'Trending Now',
-        price: 280.5,
-        imageUrl: 'product_shoe'),
-    Product(
-        id: 4,
-        name: 'Nike Air Max Test',
-        category: 'Popular',
-        price: 120,
-        imageUrl: 'product_shoe2'),
-    Product(
-        id: 5,
-        name: 'Nike Air Max 92607',
-        category: 'Trending Now',
-        price: 280.5,
-        imageUrl: 'product_shoe'),
-  ];
   int bottomNavigatorSelectedItem = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildAppBar(),
-        bottomNavigationBar: buildBottomNavigatorBar(),
+        bottomNavigationBar: buildBottomNavigationBar(context),
         body: bottomNavigatorSelectedItem == 0
             ? buildOurProductsPage(context)
             : bottomNavigatorSelectedItem == 1
                 ? const SizedBox()
                 : bottomNavigatorSelectedItem == 2
-                    ? ShoppingCart(products: products)
+                    ? ShoppingCart()
                     : const SizedBox());
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      titleTextStyle: TextStyle(color: Colors.black),
+      title: Observer(
+          builder: (context) =>
+              Text(shoppingCardViewModel.shoppingCart.cart!.length.toString())),
+      leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.black),
+          onPressed: () {
+            shoppingCardViewModel.shoppingCart.cart!.forEach((element) {
+              print(element.quantity.toString());
+            });
+          }),
+      actions: [
+        Padding(
+          padding: EdgeInsets.only(
+              top: context.heighLowValue, right: context.heighLowValue),
+          child: CircleAvatar(
+            radius: context.heightMediumValue,
+            backgroundImage: const AssetImage('assets/images/profile.jpg'),
+          ),
+        )
+      ],
+    );
+  }
+
+  StyleProvider buildBottomNavigationBar(BuildContext context) {
+    return StyleProvider(
+      style: Style(),
+      child: ConvexAppBar(
+        height: context.height * 0.07,
+        initialActiveIndex: bottomNavigatorSelectedItem,
+        activeColor: const Color(0xFFFC6E20),
+        color: Colors.grey,
+        top: -context.heightNormalValue,
+        backgroundColor: Colors.white,
+        style: TabStyle.reactCircle,
+        items: const [
+          TabItem(icon: Icons.home),
+          TabItem(icon: Icons.search),
+          TabItem(icon: Icons.badge),
+          TabItem(icon: Icons.favorite_border),
+        ],
+        onTap: (selected) {
+          setState(() {
+            bottomNavigatorSelectedItem = selected;
+          });
+        },
+      ),
+    );
   }
 
   Padding buildOurProductsPage(BuildContext context) {
@@ -99,69 +111,49 @@ class _ProductViewState extends State<ProductView> {
           Expanded(
               flex: 2,
               child: Row(children: [
-                Expanded(child: buildSearchTextField()),
+                Expanded(child: buildSearchTextField),
                 IconButton(onPressed: () {}, icon: const Icon(Icons.menu))
               ])),
           const Spacer(flex: 2),
-          Expanded(flex: 2, child: buildTabMenu()),
-          Expanded(flex: 18, child: buildProductListView()),
+          Expanded(flex: 2, child: buildTabMenu),
+          Expanded(flex: 18, child: buildProductListView),
           const Spacer(flex: 3)
         ],
       ),
     );
   }
 
-  ListView buildProductListView() {
-    return ListView.builder(
-        shrinkWrap: false,
-        scrollDirection: Axis.horizontal,
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          return Center(
-            child:
-                ProductCard(product: products[index], iconButtonOnPress: () {}),
-          );
-        });
-  }
+  TextField get buildSearchTextField => TextField(
+        decoration: InputDecoration(
+            fillColor: const Color(0xFFF0F1F1),
+            filled: true,
+            labelText: 'Search Products',
+            labelStyle: const TextStyle(
+                fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w500),
+            prefixIcon: const Icon(Icons.search),
+            contentPadding: EdgeInsets.zero,
+            border: OutlineInputBorder(
+                borderSide: BorderSide.none,
+                borderRadius:
+                    BorderRadius.circular(context.dynamicWidth(0.03)))),
+      );
 
-  BottomNavigationBar buildBottomNavigatorBar() {
-    return BottomNavigationBar(
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-      iconSize: context.dynamicHeight(0.045),
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.business),
-          label: 'Business',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.school),
-          label: 'School',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.school),
-          label: 's',
-        ),
-      ],
-      currentIndex: bottomNavigatorSelectedItem,
-      selectedItemColor: Colors.amber[800],
-      unselectedItemColor: Colors.grey,
-      onTap: (selected) {
-        setState(() {
-          bottomNavigatorSelectedItem = selected;
-        });
-      },
-    );
-  }
-
-  Widget buildTabMenu() => ListView(
+  Widget get buildTabMenu => ListView(
       scrollDirection: Axis.horizontal,
       children: List.generate(
           categories.length, (index) => buildCategoryCard(index)));
+
+  Widget get buildProductListView => Observer(
+      builder: (context) => ListView.builder(
+          shrinkWrap: false,
+          scrollDirection: Axis.horizontal,
+          itemCount: viewModel.products.length,
+          itemBuilder: (context, index) {
+            return Center(
+              child: ProductCard(
+                  product: viewModel.products[index], iconButtonOnPress: () {}),
+            );
+          }));
 
   Container buildCategoryCard(int index) {
     return Container(
@@ -190,36 +182,20 @@ class _ProductViewState extends State<ProductView> {
       ),
     );
   }
+}
 
-  AppBar buildAppBar() {
-    return AppBar(
-      leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black), onPressed: () {}),
-      actions: [
-        Padding(
-          padding:
-              EdgeInsets.only(top: context.lowValue, right: context.lowValue),
-          child: CircleAvatar(
-            radius: context.mediumValue,
-            backgroundImage: AssetImage('assets/images/profile.jpg'),
-          ),
-        )
-      ],
-    );
+class Style extends StyleHook {
+  @override
+  double get activeIconSize => 30;
+
+  @override
+  double get activeIconMargin => 10;
+
+  @override
+  double get iconSize => 20;
+
+  @override
+  TextStyle textStyle(Color color) {
+    return TextStyle(fontSize: 20, color: color);
   }
-
-  TextField buildSearchTextField() => TextField(
-        decoration: InputDecoration(
-            fillColor: const Color(0xFFF0F1F1),
-            filled: true,
-            labelText: 'Search Products',
-            labelStyle: const TextStyle(
-                fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w500),
-            prefixIcon: const Icon(Icons.search),
-            contentPadding: EdgeInsets.zero,
-            border: OutlineInputBorder(
-                borderSide: BorderSide.none,
-                borderRadius:
-                    BorderRadius.circular(context.dynamicWidth(0.03)))),
-      );
 }

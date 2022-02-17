@@ -1,5 +1,5 @@
-import 'package:ecommerce_clone_app/core/extension/context_extension.dart';
-import 'package:ecommerce_clone_app/core/extension/string_extension.dart';
+import '../../../core/extension/context_extension.dart';
+import '../../../core/extension/string_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../../../view/product/model/product.dart';
@@ -16,7 +16,7 @@ class CustomShoppingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         height: context.height * 0.095,
-        margin: EdgeInsets.only(bottom: context.lowValue),
+        margin: EdgeInsets.only(bottom: context.heighLowValue),
         child: Row(
           children: [
             buildImageStack(context),
@@ -56,7 +56,7 @@ class CustomShoppingCard extends StatelessWidget {
       height: context.height * 0.05,
       decoration: BoxDecoration(
           color: const Color(0xFFEBECED),
-          borderRadius: BorderRadius.circular(context.lowValue)),
+          borderRadius: BorderRadius.circular(context.heighLowValue)),
       child: Center(
           child: Text('x$quantity',
               style: context.textTheme.subtitle1!.copyWith(
@@ -74,7 +74,7 @@ class CustomShoppingCard extends StatelessWidget {
           width: context.witdh * 0.21,
           decoration: BoxDecoration(
               color: const Color(0xFFE1E2E4),
-              borderRadius: BorderRadius.circular(context.lowValue)),
+              borderRadius: BorderRadius.circular(context.heighLowValue * 1.5)),
         ),
         RotationTransition(
             alignment: Alignment.bottomLeft,

@@ -1,6 +1,6 @@
-import 'package:ecommerce_clone_app/core/extension/context_extension.dart';
-import 'package:ecommerce_clone_app/core/extension/string_extension.dart';
 import 'package:flutter/material.dart';
+
+import '../../../core/extension/context_extension.dart';
 
 class AvailableSizeCart extends StatelessWidget {
   final bool selected;

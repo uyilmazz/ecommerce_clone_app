@@ -9,45 +9,46 @@ extension ContextExtension on BuildContext {
   double dynamicHeight(value) => height * value;
   double dynamicWidth(value) => witdh * value;
 
-  double get lowValue => height * 0.01;
-  double get normalValue => height * 0.02;
-  double get mediumValue => height * 0.04;
-  double get highValue => height * 0.1;
+  double get heighLowValue => height * 0.01;
+  double get heightNormalValue => height * 0.02;
+  double get heightMediumValue => height * 0.04;
+  double get heightHighValue => height * 0.1;
 }
 
 extension PaddingExtension on BuildContext {
-  EdgeInsets get lowPadding => EdgeInsets.all(lowValue);
-  EdgeInsets get normalPadding => EdgeInsets.all(normalValue);
-  EdgeInsets get mediumPadding => EdgeInsets.all(mediumValue);
-  EdgeInsets get highPadding => EdgeInsets.all(highValue);
+  EdgeInsets get heightLowPadding => EdgeInsets.all(heighLowValue);
+  EdgeInsets get heightNormalPadding => EdgeInsets.all(heightNormalValue);
+  EdgeInsets get heightMediumPadding => EdgeInsets.all(heightMediumValue);
+  EdgeInsets get heightHighPadding => EdgeInsets.all(heightHighValue);
 }
 
 extension SymetricPaddingExtension on BuildContext {
-  EdgeInsets get verticalLowPadding => EdgeInsets.symmetric(vertical: lowValue);
+  EdgeInsets get verticalLowPadding =>
+      EdgeInsets.symmetric(vertical: heighLowValue);
   EdgeInsets get verticalNormalPadding =>
-      EdgeInsets.symmetric(vertical: normalValue);
+      EdgeInsets.symmetric(vertical: heightNormalValue);
   EdgeInsets get verticalMediumPadding =>
-      EdgeInsets.symmetric(vertical: mediumValue);
+      EdgeInsets.symmetric(vertical: heightMediumValue);
   EdgeInsets get verticalHighPadding =>
-      EdgeInsets.symmetric(vertical: highValue);
+      EdgeInsets.symmetric(vertical: heightHighValue);
 
   EdgeInsets get horizontalLowPadding =>
-      EdgeInsets.symmetric(horizontal: lowValue);
+      EdgeInsets.symmetric(horizontal: heighLowValue);
   EdgeInsets get horizontalNormalPadding =>
-      EdgeInsets.symmetric(horizontal: normalValue);
+      EdgeInsets.symmetric(horizontal: heightNormalValue);
   EdgeInsets get horizontalMediumPadding =>
-      EdgeInsets.symmetric(horizontal: mediumValue);
+      EdgeInsets.symmetric(horizontal: heightMediumValue);
   EdgeInsets get horizontalHighPadding =>
-      EdgeInsets.symmetric(horizontal: highValue);
+      EdgeInsets.symmetric(horizontal: heightHighValue);
 
   EdgeInsets get verticalAndHorizontalLowPadding =>
-      EdgeInsets.symmetric(vertical: lowValue, horizontal: lowValue);
-  EdgeInsets get verticalAndHorizontalNormalPadding =>
-      EdgeInsets.symmetric(vertical: normalValue, horizontal: normalValue);
-  EdgeInsets get verticalAndHorizontalMediumPadding =>
-      EdgeInsets.symmetric(vertical: mediumValue, horizontal: mediumValue);
-  EdgeInsets get verticalAndHorizontalHighPadding =>
-      EdgeInsets.symmetric(vertical: highValue, horizontal: highValue);
+      EdgeInsets.symmetric(vertical: heighLowValue, horizontal: heighLowValue);
+  EdgeInsets get verticalAndHorizontalNormalPadding => EdgeInsets.symmetric(
+      vertical: heightNormalValue, horizontal: heightNormalValue);
+  EdgeInsets get verticalAndHorizontalMediumPadding => EdgeInsets.symmetric(
+      vertical: heightMediumValue, horizontal: heightMediumValue);
+  EdgeInsets get verticalAndHorizontalHighPadding => EdgeInsets.symmetric(
+      vertical: heightHighValue, horizontal: heightHighValue);
 }
 
 extension PageExtension on BuildContext {

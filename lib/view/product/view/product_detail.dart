@@ -1,13 +1,15 @@
-import 'package:ecommerce_clone_app/_product/widget/card/available_color_circle.dart';
-import 'package:ecommerce_clone_app/_product/widget/card/detail_size_cart.dart';
-import 'package:ecommerce_clone_app/_product/widget/card/product_detail_image_card.dart';
-import 'package:ecommerce_clone_app/_product/widget/custom_divider.dart';
-import 'package:ecommerce_clone_app/_product/widget/text/custom_rich_text.dart';
-import 'package:ecommerce_clone_app/core/extension/context_extension.dart';
-import 'package:ecommerce_clone_app/core/extension/string_extension.dart';
-import 'package:ecommerce_clone_app/view/product/model/product.dart';
+import '../../shopping_cart/view_model/shopping_card_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
+import '../../../_product/widget/card/available_color_circle.dart';
+import '../../../_product/widget/card/detail_size_cart.dart';
+import '../../../_product/widget/card/product_detail_image_card.dart';
+import '../../../_product/widget/custom_divider.dart';
+import '../../../_product/widget/text/custom_rich_text.dart';
+import '../../../core/extension/context_extension.dart';
+import '../../../core/extension/string_extension.dart';
+import '../model/product.dart';
 
 class ProductDetail extends StatefulWidget {
   final Product product;
@@ -33,6 +35,8 @@ class _ProductDetailState extends State<ProductDetail> {
     Colors.purple
   ];
 
+  final ShoppingCardViewModel _shoppingCardViewModel = ShoppingCardViewModel();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +54,10 @@ class _ProductDetailState extends State<ProductDetail> {
   FloatingActionButton buildFloatingActionButton() {
     return FloatingActionButton(
         backgroundColor: const Color(0xFFE65829),
-        onPressed: () {},
+        onPressed: () {
+          _shoppingCardViewModel.addProduct(widget.product.id!);
+          Navigator.pop(context);
+        },
         child: const Icon(
           Icons.shopping_basket,
           color: Colors.white,
@@ -87,16 +94,16 @@ class _ProductDetailState extends State<ProductDetail> {
       {Color color = Colors.grey, bool isOutline = false}) {
     return InkWell(
       child: Container(
-        padding: context.normalPadding * 0.7,
+        padding: context.heightNormalPadding * 0.7,
         decoration: BoxDecoration(
           border: Border.all(
               style: isOutline ? BorderStyle.solid : BorderStyle.none,
               width: 1.5,
               color: !isOutline ? Colors.transparent : Colors.grey),
           color: isOutline ? Colors.transparent : Colors.white,
-          borderRadius: BorderRadius.circular(context.lowValue * 1.5),
+          borderRadius: BorderRadius.circular(context.heighLowValue * 1.5),
         ),
-        child: Icon(icon, size: context.normalValue, color: color),
+        child: Icon(icon, size: context.heightNormalValue, color: color),
       ),
       onTap: onPressed,
     );
@@ -104,7 +111,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Widget buildProductImage(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(bottom: context.lowValue),
+      padding: EdgeInsets.only(bottom: context.heighLowValue),
       child: Column(children: [
         Expanded(
           flex: 16,
@@ -126,7 +133,7 @@ class _ProductDetailState extends State<ProductDetail> {
       children: [
         Text('AIP',
             style: TextStyle(
-                fontSize: context.highValue * 2,
+                fontSize: context.heightHighValue * 2,
                 color: Colors.grey.shade300,
                 fontWeight: FontWeight.bold)),
         Image.asset(
@@ -139,13 +146,14 @@ class _ProductDetailState extends State<ProductDetail> {
   Widget buildProductDetail(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        margin: EdgeInsets.only(top: context.mediumValue),
+        margin: EdgeInsets.only(top: context.heightMediumValue),
         padding: EdgeInsets.symmetric(
-            vertical: context.lowValue, horizontal: context.normalValue),
+            vertical: context.heighLowValue,
+            horizontal: context.heightNormalValue),
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(
-                top: Radius.circular(context.mediumValue * 1.5))),
+                top: Radius.circular(context.heightMediumValue * 1.5))),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -187,7 +195,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     style: context.textTheme.subtitle1!
                         .copyWith(fontWeight: FontWeight.w700)),
                 SizedBox(
-                  height: context.normalValue,
+                  height: context.heightNormalValue,
                 ),
                 Text(
                     widget.product.description != null
@@ -207,7 +215,7 @@ class _ProductDetailState extends State<ProductDetail> {
   Widget buildAvailableColor(BuildContext context) {
     return availableColor != null
         ? Container(
-            padding: EdgeInsets.only(left: context.lowValue),
+            padding: EdgeInsets.only(left: context.heighLowValue),
             height: context.height * 0.06,
             child: ListView(
               scrollDirection: Axis.horizontal,
@@ -233,7 +241,7 @@ class _ProductDetailState extends State<ProductDetail> {
   Widget buildAvailableSizeCart(BuildContext context) {
     return widget.product.availableSize != null
         ? Container(
-            padding: EdgeInsets.only(left: context.lowValue),
+            padding: EdgeInsets.only(left: context.heighLowValue),
             height: context.height * 0.06,
             child: ListView(
               scrollDirection: Axis.horizontal,
@@ -261,7 +269,7 @@ class _ProductDetailState extends State<ProductDetail> {
         alignment: Alignment.bottomRight,
         child: RatingBar.builder(
           initialRating: widget.product.rates!,
-          itemSize: context.normalValue,
+          itemSize: context.heightNormalValue,
           minRating: 1,
           direction: Axis.horizontal,
           allowHalfRating: true,

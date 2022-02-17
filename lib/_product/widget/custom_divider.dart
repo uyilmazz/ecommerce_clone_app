@@ -1,5 +1,6 @@
-import 'package:ecommerce_clone_app/core/extension/context_extension.dart';
 import 'package:flutter/material.dart';
+
+import '../../core/extension/context_extension.dart';
 
 class CustomDivider extends StatelessWidget {
   final double indent;

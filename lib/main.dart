@@ -1,6 +1,6 @@
-import 'package:ecommerce_clone_app/view/product/view/product_detail.dart';
-import 'package:ecommerce_clone_app/view/product/view/product_view.dart';
 import 'package:flutter/material.dart';
+
+import 'view/product/view/product_view.dart';
 
 void main() => runApp(MyApp());
 
