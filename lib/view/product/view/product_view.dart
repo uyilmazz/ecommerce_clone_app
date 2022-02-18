@@ -21,8 +21,6 @@ class ProductView extends StatefulWidget {
 }
 
 class _ProductViewState extends State<ProductView> {
-  List<String> tabs = ['Ayakkabı', 'Kazak', 'Çanta', 'Mont', 'Jacket', 'Watch'];
-
   List<Category> categories = [
     Category(name: 'Sneakers', image: 'shoe_thumb_2'),
     Category(name: 'Jacket', image: 'jacket'),

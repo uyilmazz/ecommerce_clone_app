@@ -6,7 +6,6 @@ import '../../../_product/widget/text/header_text.dart';
 import '../../../core/extension/context_extension.dart';
 import '../../product/model/product.dart';
 import '../../product/view_model/product_view_model.dart';
-import '../../shopping_cart/view_model/shopping_card_view_model.dart';
 
 class FavoriteView extends StatefulWidget {
   const FavoriteView({

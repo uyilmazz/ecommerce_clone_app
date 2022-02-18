@@ -191,9 +191,7 @@ class _ProductDetailState extends State<ProductDetail> {
             Icons.star,
             color: Colors.amber,
           ),
-          onRatingUpdate: (rating) {
-            print(rating);
-          },
+          onRatingUpdate: (rating) {},
         ));
   }
 

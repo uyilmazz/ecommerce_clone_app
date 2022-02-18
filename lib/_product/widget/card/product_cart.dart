@@ -1,5 +1,3 @@
-import '../text/custom_rich_text.dart';
-import '../../../view/product/view_model/product_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,6 +5,8 @@ import '../../../core/extension/context_extension.dart';
 import '../../../core/extension/string_extension.dart';
 import '../../../view/product/model/product.dart';
 import '../../../view/product/view/product_detail.dart';
+import '../../../view/product/view_model/product_view_model.dart';
+import '../text/custom_rich_text.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;

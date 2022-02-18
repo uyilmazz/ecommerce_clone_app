@@ -32,7 +32,7 @@ class CustomShoppingOrFavoriteCard extends StatelessWidget {
       title: Text(
         product.name.toString(),
         style: context.textTheme.headline6!
-            .copyWith(fontSize: 17, color: Color(0xFF49515C)),
+            .copyWith(fontSize: 17, color: const Color(0xFF49515C)),
       ),
       subtitle: RichText(
         text: TextSpan(
@@ -43,7 +43,8 @@ class CustomShoppingOrFavoriteCard extends StatelessWidget {
             TextSpan(
                 text: product.price.toString(),
                 style: context.textTheme.subtitle2!.copyWith(
-                    fontWeight: FontWeight.w700, color: Color(0xFF29323F))),
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF29323F))),
           ],
         ),
       ),

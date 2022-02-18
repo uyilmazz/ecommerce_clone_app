@@ -49,12 +49,6 @@ class ProductViewModel extends ChangeNotifier {
         price: 280.5,
         imageUrl: 'product_shoe'),
   ];
-  List<Category> categories = [
-    Category(name: 'Sneakers', image: 'shoe_thumb_2'),
-    Category(name: 'Jacket', image: 'jacket'),
-    Category(name: 'Watch', image: 'watch'),
-    Category(name: 'Bag', image: 'jacket'),
-  ];
 
   List<Product> _favoriteProducts = [];
   List<Product> get favoriteProducts => _favoriteProducts;
@@ -73,7 +67,6 @@ class ProductViewModel extends ChangeNotifier {
     int _itemIndex = products.indexWhere((product) => product.id == id);
     bool _isFavorite = products[_itemIndex].isFavorite!;
     products[_itemIndex].isFavorite = !_isFavorite;
-    print(products[_itemIndex].isFavorite);
     notifyListeners();
   }
 

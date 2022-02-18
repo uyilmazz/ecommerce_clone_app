@@ -8,9 +8,11 @@ import 'view/shopping_cart/view_model/shopping_card_view_model.dart';
 void main() => runApp(MultiProvider(providers: [
       ChangeNotifierProvider(create: (context) => ShoppingCardViewModel()),
       ChangeNotifierProvider(create: (context) => ProductViewModel()),
-    ], child: MyApp()));
+    ], child: const MyApp()));
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
