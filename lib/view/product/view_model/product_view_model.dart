@@ -1,14 +1,9 @@
-import 'package:mobx/mobx.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../model/category.dart';
 import '../model/product.dart';
 
-part 'product_view_model.g.dart';
-
-class ProductViewModel = ProductViewModelBase with _$ProductViewModel;
-
-abstract class ProductViewModelBase with Store {
-  @observable
+class ProductViewModel extends ChangeNotifier {
   List<Product> products = [
     Product(
         id: 1,
@@ -54,8 +49,6 @@ abstract class ProductViewModelBase with Store {
         price: 280.5,
         imageUrl: 'product_shoe'),
   ];
-
-  @observable
   List<Category> categories = [
     Category(name: 'Sneakers', image: 'shoe_thumb_2'),
     Category(name: 'Jacket', image: 'jacket'),
@@ -63,14 +56,29 @@ abstract class ProductViewModelBase with Store {
     Category(name: 'Bag', image: 'jacket'),
   ];
 
-  // @action
-  // void productUpate(int id, String name) {
-  //   products = products.map((product) {
-  //     if (product.id == id) {
-  //       product.name = name;
-  //     }
-  //     return product;
-  //   }).toList();
-  // }
+  List<Product> _favoriteProducts = [];
+  List<Product> get favoriteProducts => _favoriteProducts;
 
+  late Product _currentProduct;
+  Product get currentProduct => _currentProduct;
+
+  void setFavoriteProducts() {
+    List<Product> _products =
+        products.where((product) => product.isFavorite == true).toList();
+    _favoriteProducts = _products;
+    notifyListeners();
+  }
+
+  void changeFavoriteProduct(int id) {
+    int _itemIndex = products.indexWhere((product) => product.id == id);
+    bool _isFavorite = products[_itemIndex].isFavorite!;
+    products[_itemIndex].isFavorite = !_isFavorite;
+    print(products[_itemIndex].isFavorite);
+    notifyListeners();
+  }
+
+  void setCurrentProduct(Product product) {
+    _currentProduct = product;
+    notifyListeners();
+  }
 }

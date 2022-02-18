@@ -1,4 +1,7 @@
+import '../text/custom_rich_text.dart';
+import '../../../view/product/view_model/product_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/extension/context_extension.dart';
 import '../../../core/extension/string_extension.dart';
@@ -26,7 +29,7 @@ class ProductCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(context.heightNormalValue)),
       child: Stack(
-        children: [buildFavoriteButton(), buildColumnBodyInfo(context)],
+        children: [buildColumnBodyInfo(context), buildFavoriteButton()],
       ),
     );
   }
@@ -36,20 +39,24 @@ class ProductCard extends StatelessWidget {
         left: 0,
         top: -10,
         child: IconButton(
+            splashRadius: 0.1,
             onPressed: iconButtonOnPress,
-            icon: const Icon(
-              Icons.favorite_border,
-              color: Colors.grey,
+            icon: Icon(
+              product.isFavorite! ? Icons.favorite : Icons.favorite_border,
+              color: product.isFavorite! ? Colors.red : Colors.grey,
             )));
   }
 
   Widget buildColumnBodyInfo(BuildContext context) {
     return InkWell(
       onTap: () {
+        context.read<ProductViewModel>().setCurrentProduct(product);
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ProductDetail(product: product)));
+                builder: (context) => ProductDetail(
+                    product:
+                        context.watch<ProductViewModel>().currentProduct)));
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -73,13 +80,10 @@ class ProductCard extends StatelessWidget {
           Text(
             product.category.toString(),
             style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                fontWeight: FontWeight.bold, color: Color(0xFFEA744E)),
+                fontWeight: FontWeight.bold, color: const Color(0xFFEA744E)),
           ),
-          Text(product.price.toString(),
-              style: Theme.of(context)
-                  .textTheme
-                  .subtitle1!
-                  .copyWith(fontWeight: FontWeight.bold, fontSize: 18))
+          CustomRichText(
+              firstText: '\$ ', seconText: product.price, fontSize: 18),
         ],
       ),
     );

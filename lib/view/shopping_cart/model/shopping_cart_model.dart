@@ -1,33 +1,17 @@
-class ShoppingCartModel {
-  List<CartItem>? cart;
+import 'package:json_annotation/json_annotation.dart';
 
-  ShoppingCartModel({
-    this.cart,
-  });
+part 'shopping_cart_model.g.dart';
 
-  ShoppingCartModel.fromJson(Map<String, dynamic> json) {
-    cart = json['cart'];
-  }
-
-  Map<String, dynamic> toJson() => {
-        "cart": cart,
-      };
-}
-
+@JsonSerializable()
 class CartItem {
   int? productId;
   int? quantity;
 
-  CartItem({
-    required this.productId,
-    this.quantity = 1,
-  });
+  CartItem({this.productId, this.quantity});
 
-  CartItem.fromJson(Map<String, dynamic> json) {
-    productId = json['productId'];
-    quantity = json['quantity'];
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    return _$CartItemFromJson(json);
   }
 
-  Map<String, dynamic> toJson() =>
-      {"productId": productId, "quantity": quantity};
+  Map<String, dynamic> toJson() => _$CartItemToJson(this);
 }

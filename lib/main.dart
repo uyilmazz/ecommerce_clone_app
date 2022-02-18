@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'view/product/view/product_view.dart';
+import 'view/product/view_model/product_view_model.dart';
+import 'view/shopping_cart/view_model/shopping_card_view_model.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MultiProvider(providers: [
+      ChangeNotifierProvider(create: (context) => ShoppingCardViewModel()),
+      ChangeNotifierProvider(create: (context) => ProductViewModel()),
+    ], child: MyApp()));
 
 class MyApp extends StatelessWidget {
   @override
