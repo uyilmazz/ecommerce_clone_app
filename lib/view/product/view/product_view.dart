@@ -1,14 +1,17 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
-import '../view_model/product_view_model.dart';
-import '../../shopping_cart/view_model/shopping_card_view_model.dart';
+import '../../../_product/widget/buttom/app_icon_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
 
 import '../../../_product/widget/card/product_cart.dart';
+import '../../../_product/widget/text/header_text.dart';
 import '../../../core/extension/context_extension.dart';
 import '../../../core/extension/string_extension.dart';
 import '../../shopping_cart/view/shopping_cart_view.dart';
 import '../model/category.dart';
+import '../model/product.dart';
+import '../view_model/product_view_model.dart';
+import 'favorite_view.dart';
 
 class ProductView extends StatefulWidget {
   const ProductView({Key? key}) : super(key: key);
@@ -18,9 +21,6 @@ class ProductView extends StatefulWidget {
 }
 
 class _ProductViewState extends State<ProductView> {
-  final ProductViewModel viewModel = ProductViewModel();
-  final ShoppingCardViewModel shoppingCardViewModel = ShoppingCardViewModel();
-
   List<String> tabs = ['Ayakkabı', 'Kazak', 'Çanta', 'Mont', 'Jacket', 'Watch'];
 
   List<Category> categories = [
@@ -35,93 +35,96 @@ class _ProductViewState extends State<ProductView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: buildAppBar(),
-        bottomNavigationBar: buildBottomNavigationBar(context),
-        body: bottomNavigatorSelectedItem == 0
-            ? buildOurProductsPage(context)
-            : bottomNavigatorSelectedItem == 1
-                ? const SizedBox()
-                : bottomNavigatorSelectedItem == 2
-                    ? ShoppingCart()
-                    : const SizedBox());
-  }
-
-  AppBar buildAppBar() {
-    return AppBar(
-      titleTextStyle: TextStyle(color: Colors.black),
-      title: Observer(
-          builder: (context) =>
-              Text(shoppingCardViewModel.shoppingCart.cart!.length.toString())),
-      leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black),
-          onPressed: () {
-            shoppingCardViewModel.shoppingCart.cart!.forEach((element) {
-              print(element.quantity.toString());
-            });
-          }),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(
-              top: context.heighLowValue, right: context.heighLowValue),
-          child: CircleAvatar(
-            radius: context.heightMediumValue,
-            backgroundImage: const AssetImage('assets/images/profile.jpg'),
+        bottomNavigationBar: buildBottomNavigationBar,
+        body: SafeArea(
+          child: Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: context.dynamicWidth(0.05)),
+            child: Column(
+              children: [
+                const Spacer(flex: 2),
+                Expanded(flex: 6, child: buildAppBar),
+                const Spacer(flex: 3),
+                Expanded(flex: 92, child: setPage())
+              ],
+            ),
           ),
-        )
-      ],
-    );
+        ));
   }
 
-  StyleProvider buildBottomNavigationBar(BuildContext context) {
-    return StyleProvider(
-      style: Style(),
-      child: ConvexAppBar(
-        height: context.height * 0.07,
-        initialActiveIndex: bottomNavigatorSelectedItem,
-        activeColor: const Color(0xFFFC6E20),
-        color: Colors.grey,
-        top: -context.heightNormalValue,
-        backgroundColor: Colors.white,
-        style: TabStyle.reactCircle,
-        items: const [
-          TabItem(icon: Icons.home),
-          TabItem(icon: Icons.search),
-          TabItem(icon: Icons.badge),
-          TabItem(icon: Icons.favorite_border),
+  Widget get buildAppBar => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CustomAppBarIconButton(
+              icon: Icons.sort,
+              color: Colors.black,
+              isOutline: false,
+              iconSize: context.heightNormalValue * 1.3),
+          CircleAvatar(
+            radius: context.heightNormalValue * 1.5,
+            backgroundImage: const AssetImage('assets/images/profile.jpg'),
+          )
         ],
-        onTap: (selected) {
-          setState(() {
-            bottomNavigatorSelectedItem = selected;
-          });
-        },
-      ),
-    );
+      );
+
+  Widget setPage() {
+    return bottomNavigatorSelectedItem == 0
+        ? buildOurProductsPage
+        : bottomNavigatorSelectedItem == 1
+            ? const SizedBox()
+            : bottomNavigatorSelectedItem == 2
+                ? const ShoppingCart()
+                : const FavoriteView();
   }
 
-  Padding buildOurProductsPage(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: context.dynamicWidth(0.05)),
-      child: Column(
+  StyleProvider get buildBottomNavigationBar => StyleProvider(
+        style: Style(),
+        child: ConvexAppBar(
+          height: context.height * 0.07,
+          initialActiveIndex: bottomNavigatorSelectedItem,
+          activeColor: const Color(0xFFFC6E20),
+          color: Colors.grey,
+          top: -context.heightNormalValue,
+          backgroundColor: Colors.white,
+          style: TabStyle.reactCircle,
+          items: const [
+            TabItem(icon: Icons.home),
+            TabItem(icon: Icons.search),
+            TabItem(icon: Icons.card_travel),
+            TabItem(icon: Icons.favorite_border),
+          ],
+          onTap: (selected) {
+            setState(() {
+              bottomNavigatorSelectedItem = selected;
+            });
+          },
+        ),
+      );
+
+  Widget get buildOurProductsPage => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Our', style: TextStyle(fontSize: 25)),
-          const Text('Products',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+          const HeaderText(
+            firstText: 'Our',
+            seconText: 'Products',
+          ),
           const Spacer(),
           Expanded(
               flex: 2,
               child: Row(children: [
                 Expanded(child: buildSearchTextField),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.menu))
+                SizedBox(width: context.witdh * 0.04),
+                CustomAppBarIconButton(
+                    icon: Icons.filter_list,
+                    color: Colors.black87,
+                    iconSize: context.heightNormalValue * 1.3)
               ])),
           const Spacer(flex: 2),
           Expanded(flex: 2, child: buildTabMenu),
           Expanded(flex: 18, child: buildProductListView),
           const Spacer(flex: 3)
         ],
-      ),
-    );
-  }
+      );
 
   TextField get buildSearchTextField => TextField(
         decoration: InputDecoration(
@@ -143,17 +146,23 @@ class _ProductViewState extends State<ProductView> {
       children: List.generate(
           categories.length, (index) => buildCategoryCard(index)));
 
-  Widget get buildProductListView => Observer(
-      builder: (context) => ListView.builder(
-          shrinkWrap: false,
-          scrollDirection: Axis.horizontal,
-          itemCount: viewModel.products.length,
-          itemBuilder: (context, index) {
-            return Center(
-              child: ProductCard(
-                  product: viewModel.products[index], iconButtonOnPress: () {}),
-            );
-          }));
+  Widget get buildProductListView => ListView.builder(
+      shrinkWrap: false,
+      scrollDirection: Axis.horizontal,
+      itemCount: context.watch<ProductViewModel>().products.length,
+      itemBuilder: (context, index) {
+        Product _currentProduct =
+            context.read<ProductViewModel>().products[index];
+        return Center(
+          child: ProductCard(
+              product: _currentProduct,
+              iconButtonOnPress: () {
+                context
+                    .read<ProductViewModel>()
+                    .changeFavoriteProduct(_currentProduct.id!);
+              }),
+        );
+      });
 
   Container buildCategoryCard(int index) {
     return Container(

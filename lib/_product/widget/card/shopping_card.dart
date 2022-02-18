@@ -1,15 +1,16 @@
-import '../../../core/extension/context_extension.dart';
-import '../../../core/extension/string_extension.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/extension/context_extension.dart';
+import '../../../core/extension/string_extension.dart';
 import '../../../view/product/model/product.dart';
 
-class CustomShoppingCard extends StatelessWidget {
+class CustomShoppingOrFavoriteCard extends StatelessWidget {
   final Product product;
-  final int quantity;
+  final int? quantity;
+  final bool? isFavorite;
 
-  const CustomShoppingCard(
-      {Key? key, required this.product, required this.quantity})
+  const CustomShoppingOrFavoriteCard(
+      {Key? key, required this.product, this.quantity, this.isFavorite})
       : super(key: key);
 
   @override
@@ -58,11 +59,15 @@ class CustomShoppingCard extends StatelessWidget {
           color: const Color(0xFFEBECED),
           borderRadius: BorderRadius.circular(context.heighLowValue)),
       child: Center(
-          child: Text('x$quantity',
-              style: context.textTheme.subtitle1!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: const Color(0xFF373F4C)))),
+          child: !(isFavorite != null && isFavorite == true)
+              ? Text('x$quantity',
+                  style: context.textTheme.subtitle1!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: const Color(0xFF373F4C)))
+              : IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.favorite, color: Colors.red))),
     );
   }
 

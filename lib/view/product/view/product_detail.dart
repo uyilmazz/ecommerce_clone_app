@@ -1,14 +1,18 @@
-import '../../shopping_cart/view_model/shopping_card_view_model.dart';
+import '../../../_product/widget/buttom/app_icon_button.dart';
+import '../view_model/product_view_model.dart';
+
+import '../../../_product/widget/listView/available_color.dart';
+import '../../../_product/widget/listView/available_size.dart';
+import '../../../_product/widget/listView/product_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:provider/provider.dart';
 
-import '../../../_product/widget/card/available_color_circle.dart';
-import '../../../_product/widget/card/detail_size_cart.dart';
-import '../../../_product/widget/card/product_detail_image_card.dart';
-import '../../../_product/widget/custom_divider.dart';
+import '../../../_product/widget/divider/custom_divider.dart';
 import '../../../_product/widget/text/custom_rich_text.dart';
 import '../../../core/extension/context_extension.dart';
 import '../../../core/extension/string_extension.dart';
+import '../../shopping_cart/view_model/shopping_card_view_model.dart';
 import '../model/product.dart';
 
 class ProductDetail extends StatefulWidget {
@@ -35,8 +39,6 @@ class _ProductDetailState extends State<ProductDetail> {
     Colors.purple
   ];
 
-  final ShoppingCardViewModel _shoppingCardViewModel = ShoppingCardViewModel();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +57,7 @@ class _ProductDetailState extends State<ProductDetail> {
     return FloatingActionButton(
         backgroundColor: const Color(0xFFE65829),
         onPressed: () {
-          _shoppingCardViewModel.addProduct(widget.product.id!);
+          context.read<ShoppingCardViewModel>().addProduct(widget.product.id!);
           Navigator.pop(context);
         },
         child: const Icon(
@@ -78,34 +80,22 @@ class _ProductDetailState extends State<ProductDetail> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _appBarIcon(
-            Icons.arrow_back_ios_outlined, () => {Navigator.pop(context)},
-            isOutline: true, color: Colors.black54),
-        _appBarIcon(
-            widget.product.isFavorite! ? Icons.favorite : Icons.favorite_border,
-            () => {Navigator.pop(context)},
-            isOutline: false,
-            color: widget.product.isFavorite! ? Colors.red : Colors.grey),
+        CustomAppBarIconButton(
+            icon: Icons.arrow_back_ios_outlined,
+            onPressed: () => Navigator.pop(context),
+            isOutline: true,
+            color: Colors.black54),
+        CustomAppBarIconButton(
+            icon: context.watch<ProductViewModel>().currentProduct.isFavorite!
+                ? Icons.favorite
+                : Icons.favorite_border,
+            onPressed: () => context
+                .read<ProductViewModel>()
+                .changeFavoriteProduct(widget.product.id!),
+            color: context.watch<ProductViewModel>().currentProduct.isFavorite!
+                ? Colors.red
+                : Colors.grey)
       ],
-    );
-  }
-
-  Widget _appBarIcon(IconData icon, Function() onPressed,
-      {Color color = Colors.grey, bool isOutline = false}) {
-    return InkWell(
-      child: Container(
-        padding: context.heightNormalPadding * 0.7,
-        decoration: BoxDecoration(
-          border: Border.all(
-              style: isOutline ? BorderStyle.solid : BorderStyle.none,
-              width: 1.5,
-              color: !isOutline ? Colors.transparent : Colors.grey),
-          color: isOutline ? Colors.transparent : Colors.white,
-          borderRadius: BorderRadius.circular(context.heighLowValue * 1.5),
-        ),
-        child: Icon(icon, size: context.heightNormalValue, color: color),
-      ),
-      onTap: onPressed,
     );
   }
 
@@ -120,7 +110,7 @@ class _ProductDetailState extends State<ProductDetail> {
         Expanded(
           flex: 4,
           child: widget.product.detailImages != null
-              ? buildImageDetailListView(context)
+              ? ProductImagesListView(product: widget.product)
               : const SizedBox(),
         )
       ]),
@@ -161,50 +151,9 @@ class _ProductDetailState extends State<ProductDetail> {
             const Center(child: CustomDivider(indent: 0.40, endIndent: 0.40)),
             buildNameAndPrice(context),
             buildRatingBar(context),
-            Container(
-              height: context.height * 0.14,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text('Available Size',
-                      style: context.textTheme.subtitle1!
-                          .copyWith(fontWeight: FontWeight.w700)),
-                  buildAvailableSizeCart(context),
-                ],
-              ),
-            ),
-
-            Container(
-              height: context.height * 0.14,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text('Available Color',
-                      style: context.textTheme.subtitle1!
-                          .copyWith(fontWeight: FontWeight.w700)),
-                  buildAvailableColor(context),
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Product Description',
-                    style: context.textTheme.subtitle1!
-                        .copyWith(fontWeight: FontWeight.w700)),
-                SizedBox(
-                  height: context.heightNormalValue,
-                ),
-                Text(
-                    widget.product.description != null
-                        ? widget.product.description.toString()
-                        : 'Product description is not found',
-                    style: context.textTheme.subtitle1!.copyWith(
-                        fontWeight: FontWeight.w400, color: Colors.black54))
-              ],
-            )
+            buildAvailableSize(context),
+            buildAvailableColor(context),
+            buildProductDescription(context)
             // buildAvailableColor(context),
           ],
         ),
@@ -212,56 +161,20 @@ class _ProductDetailState extends State<ProductDetail> {
     );
   }
 
-  Widget buildAvailableColor(BuildContext context) {
-    return availableColor != null
-        ? Container(
-            padding: EdgeInsets.only(left: context.heighLowValue),
-            height: context.height * 0.06,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: List.generate(
-                  availableColor!.length,
-                  (index) => GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            availableColorSeletecItem = index;
-                          });
-                        },
-                        child: AvailableColorCart(
-                            selected: availableColorSeletecItem == index
-                                ? true
-                                : false,
-                            color: availableColor![index]),
-                      )),
-            ),
-          )
-        : const Text('Not Available Color');
-  }
-
-  Widget buildAvailableSizeCart(BuildContext context) {
-    return widget.product.availableSize != null
-        ? Container(
-            padding: EdgeInsets.only(left: context.heighLowValue),
-            height: context.height * 0.06,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: List.generate(
-                  widget.product.availableSize!.length,
-                  (index) => GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            availableSizeSelectedItem = index;
-                          });
-                        },
-                        child: AvailableSizeCart(
-                            selected: availableSizeSelectedItem == index
-                                ? true
-                                : false,
-                            sizeString: widget.product.availableSize![index]),
-                      )),
-            ),
-          )
-        : const Text('Not Available Size');
+  Widget buildNameAndPrice(BuildContext context) {
+    return SizedBox(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            widget.product.name.toString().toUpperCase(),
+            style: context.textTheme.headline5!
+                .copyWith(fontWeight: FontWeight.w800),
+          ),
+          CustomRichText(firstText: '\$ ', seconText: widget.product.price),
+        ],
+      ),
+    );
   }
 
   Align buildRatingBar(BuildContext context) {
@@ -284,37 +197,74 @@ class _ProductDetailState extends State<ProductDetail> {
         ));
   }
 
-  Widget buildNameAndPrice(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  SizedBox buildAvailableSize(BuildContext context) {
+    return SizedBox(
+      height: context.height * 0.14,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(
-            widget.product.name.toString().toUpperCase(),
-            style: context.textTheme.headline5!
-                .copyWith(fontWeight: FontWeight.w800),
-          ),
-          CustomRichText(price: widget.product.price),
+          Text('Available Size',
+              style: context.textTheme.subtitle1!
+                  .copyWith(fontWeight: FontWeight.w700)),
+          buildAvailableSizeCart(context),
         ],
       ),
     );
   }
 
-  ListView buildImageDetailListView(BuildContext context) {
-    return ListView(
-      scrollDirection: Axis.horizontal,
-      children: List.generate(
-          widget.product.detailImages!.length,
-          (index) => GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedItem = index;
-                  });
-                },
-                child: ImageCard(
-                    imageName: widget.product.detailImages![index],
-                    selected: index == selectedItem ? true : false),
-              )),
+  Widget buildAvailableSizeCart(BuildContext context) {
+    return widget.product.availableSize != null
+        ? Container(
+            padding: EdgeInsets.only(left: context.heighLowValue),
+            height: context.height * 0.06,
+            child: AvailableSizeListView(product: widget.product),
+          )
+        : const Text('Not Available Size');
+  }
+
+  SizedBox buildAvailableColor(BuildContext context) {
+    return SizedBox(
+      height: context.height * 0.14,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text('Available Color',
+              style: context.textTheme.subtitle1!
+                  .copyWith(fontWeight: FontWeight.w700)),
+          buildAvailableColorListView(context),
+        ],
+      ),
+    );
+  }
+
+  Widget buildAvailableColorListView(BuildContext context) {
+    return availableColor != null
+        ? Container(
+            padding: EdgeInsets.only(left: context.heighLowValue),
+            height: context.height * 0.06,
+            child: AvailableColorListView(availableColor: availableColor!))
+        : const Text('Not Available Color');
+  }
+
+  Column buildProductDescription(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Product Description',
+            style: context.textTheme.subtitle1!
+                .copyWith(fontWeight: FontWeight.w700)),
+        SizedBox(
+          height: context.heightNormalValue,
+        ),
+        Text(
+            widget.product.description != null
+                ? widget.product.description.toString()
+                : 'Product description is not found',
+            style: context.textTheme.subtitle1!
+                .copyWith(fontWeight: FontWeight.w400, color: Colors.black54))
+      ],
     );
   }
 }
